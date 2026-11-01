@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#1c1b2e">
+  <meta name="theme-color" content="#A9C0D6">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="탷정">
   <title>탷정 - 우리의 마지막 대화</title>
   <link rel="stylesheet" href="style.css">
@@ -38,19 +38,17 @@
     <!-- 채팅 화면 -->
     <section id="chat-screen" class="screen">
       <header class="chat-header">
-        <button id="back-btn" class="icon-btn" type="button" aria-label="뒤로">‹</button>
-        <div class="avatar" aria-hidden="true">태</div>
-        <div class="who">
-          <strong>태현</strong>
-          <span>온라인</span>
-        </div>
+        <button id="back-btn" class="back-btn" type="button" aria-label="뒤로">‹</button>
+        <strong class="chat-title">태현</strong>
+        <button id="replay-btn" class="replay-btn" type="button">다시보기</button>
       </header>
 
       <div id="chat-body" class="chat-body"></div>
 
       <footer class="chat-footer">
-        <div class="fake-input">답장은 다음 단계에서 열려요 ✍️</div>
-        <button id="replay-btn" class="replay-btn" type="button">다시 보기</button>
+        <div class="plus-btn" aria-hidden="true">+</div>
+        <div class="fake-input">답장은 다음 단계에서 열려요</div>
+        <div class="send-btn" aria-hidden="true">↑</div>
       </footer>
     </section>
 
