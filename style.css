@@ -1,13 +1,14 @@
 /* ===== 기본 색상 (여기 값만 바꾸면 분위기가 바뀌어요) ===== */
 :root {
   --sky: #a9c0d6;
-  --sky-deep: #8fabc4;
   --text: #1f2933;
   --text-sub: #5b6b7a;
   --white: #ffffff;
   --yellow: #ffe74c;
   --yellow-text: #2b2410;
   --avatar-bg: #f2cf63;
+  --ios-bg: #f2f2f7;
+  --ios-line: #e5e5ea;
 }
 
 * {
@@ -29,7 +30,11 @@ body {
   line-height: 1.5;
 }
 
-/* ===== 앱 전체 틀 ===== */
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
 #app {
   max-width: 480px;
   min-height: 100vh;
@@ -57,7 +62,6 @@ body {
   font-size: 15px;
   font-weight: 800;
   letter-spacing: 4px;
-  color: var(--text);
 }
 
 .title-area {
@@ -128,8 +132,6 @@ h1 {
   color: var(--yellow-text);
   font-size: 17px;
   font-weight: 700;
-  font-family: inherit;
-  cursor: pointer;
   transition: transform 0.1s ease;
 }
 
@@ -137,20 +139,524 @@ h1 {
   transform: scale(0.97);
 }
 
-/* ===== 채팅 화면 ===== */
-#chat-screen {
-  padding: 0;
+/* ===== 폰 전체 ===== */
+/* 배경화면: 올린 사진이 있으면 사진, 없으면 회색 그라데이션이 보여요 */
+#phone {
+  display: none;
+  position: relative;
   height: 100vh;
   height: 100dvh;
+  overflow: hidden;
+  background:
+    url("IMG_5409.jpeg") center / cover no-repeat,
+    url("wallpaper.jpg") center / cover no-repeat,
+    radial-gradient(ellipse 90% 45% at 25% 80%, #6f706c 0%, rgba(111, 112, 108, 0) 70%),
+    linear-gradient(165deg, #ecedeb 0%, #d4d5d2 45%, #bcbdb9 100%);
+}
+
+#phone.active {
+  display: block;
+}
+
+.layer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: none;
+  flex-direction: column;
+  padding-top: 44px;
+}
+
+.layer.active {
+  display: flex;
+}
+
+/* ===== 상태 표시줄 (시간 / 와이파이 / 배터리) ===== */
+#statusbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  padding: 0 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1c1c1e;
+  z-index: 50;
+  pointer-events: none;
+}
+
+#phone[data-view="lock"] #sb-time {
+  visibility: hidden;
+}
+
+.sb-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.battery {
+  position: relative;
+  width: 25px;
+  height: 12px;
+  border: 1.5px solid rgba(28, 28, 30, 0.45);
+  border-radius: 4px;
+  padding: 1px;
+}
+
+.battery i {
+  display: block;
+  width: 67%;
+  height: 100%;
+  border-radius: 2px;
+  background: #1c1c1e;
+}
+
+.battery::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  top: 3px;
+  width: 2px;
+  height: 4px;
+  border-radius: 0 2px 2px 0;
+  background: rgba(28, 28, 30, 0.45);
+}
+
+/* ===== 잠금화면 ===== */
+.lock-top {
+  text-align: center;
+  margin-top: 22px;
+  color: rgba(28, 28, 30, 0.88);
+}
+
+.lock-date {
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.lock-time {
+  font-size: 84px;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -2px;
+}
+
+.notifs {
+  margin-top: 26px;
+  padding: 0 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notif {
+  display: flex;
+  gap: 10px;
+  padding: 11px 13px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  animation: slide 0.4s ease both;
+}
+
+.notif:nth-child(2) { animation-delay: 0.15s; }
+.notif:nth-child(3) { animation-delay: 0.3s; }
+
+.n-icon {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: var(--yellow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.n-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.n-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.n-head span {
+  font-size: 12px;
+  color: #6b7076;
+}
+
+.n-body p {
+  font-size: 14px;
+  color: #2b2f33;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lock-bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hint {
+  font-size: 14px;
+  color: rgba(28, 28, 30, 0.6);
+  animation: blink2 2.2s infinite;
+}
+
+.lock-exit {
+  margin-top: 10px;
+  border: none;
+  background: rgba(255, 255, 255, 0.5);
+  color: #3a3f44;
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.home-bar {
+  width: 130px;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(28, 28, 30, 0.7);
+  margin: 12px 0 calc(env(safe-area-inset-bottom) + 8px);
+  align-self: center;
+}
+
+/* ===== 암호 입력 ===== */
+#passcode {
+  align-items: center;
+  padding-top: 110px;
+}
+
+.pc-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1c1c1e;
+}
+
+.dots {
+  display: flex;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.dots i {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1.5px solid #1c1c1e;
+}
+
+.dots i.on {
+  background: #1c1c1e;
+}
+
+.dots.shake {
+  animation: shake 0.4s;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 78px);
+  gap: 16px 24px;
+  margin-top: 40px;
+}
+
+.key {
+  width: 78px;
+  height: 78px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  color: #1c1c1e;
+  font-size: 32px;
+}
+
+.key:active {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.key.plain {
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  font-size: 17px;
+}
+
+/* ===== 홈화면 ===== */
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px 8px;
+  padding: 22px 18px;
+}
+
+.app {
+  position: relative;
+  border: none;
+  background: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #1c1c1e;
+}
+
+.app:active .ic {
+  transform: scale(0.92);
+}
+
+.app em {
+  font-style: normal;
+  font-size: 11.5px;
+}
+
+.ic {
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  color: #fff;
+  transition: transform 0.1s ease;
+}
+
+.ic-youtube { background: #ff2d3f; font-size: 26px; }
+.ic-chrome { background: #fff; }
+.ic-insta { background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5); }
+.ic-phone { background: #34c759; }
+.ic-safari { background: #2f80ed; }
+.ic-kakao { background: var(--yellow); }
+.ic-memo { background: #fff; }
+
+.badge {
+  position: absolute;
+  top: -6px;
+  right: 2px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 11px;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dock {
+  margin: auto 12px 6px;
+  padding: 12px 10px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.4);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  display: flex;
+  justify-content: space-around;
+}
+
+/* ===== 앱 공통: 맨 아래 홈 막대 ===== */
+.go-home {
+  border: none;
+  background: #fff;
+  height: 26px;
+  padding-bottom: env(safe-area-inset-bottom);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.go-home::after {
+  content: "";
+  width: 130px;
+  height: 5px;
+  border-radius: 3px;
+  background: #1c1c1e;
+}
+
+/* ===== 카톡 ===== */
+#kakao {
+  background: #fff;
+}
+
+.k-head {
+  padding: 10px 18px 8px;
+  background: #fff;
+}
+
+.k-head h2 {
+  font-size: 21px;
+}
+
+.k-body {
+  flex: 1;
   min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #fff;
+}
+
+.k-sec {
+  padding: 12px 18px 4px;
+  font-size: 12px;
+  color: #8a8f96;
+}
+
+.k-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 18px;
+}
+
+.k-row:active {
+  background: #f3f4f6;
+}
+
+.k-av {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 17px;
+  background: #cfd8e2;
+  color: #fff;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.k-av.yellow { background: var(--avatar-bg); color: var(--yellow-text); }
+.k-av.blue { background: #9db7d4; }
+.k-av.green { background: #a8d5b5; }
+
+.k-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.k-main b {
+  display: block;
+  font-size: 15px;
+}
+
+.k-main small {
+  display: block;
+  font-size: 13px;
+  color: #8a8f96;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.k-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  font-size: 11px;
+  color: #9aa0a6;
+}
+
+.k-badge {
+  background: #ff4b3e;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 7px;
+}
+
+.gift-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 14px 18px;
+}
+
+.gift {
+  border: 1px solid var(--ios-line);
+  border-radius: 14px;
+  padding: 16px 8px;
+  text-align: center;
+}
+
+.gift .e {
+  font-size: 38px;
+}
+
+.gift b {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.k-tabs {
+  display: flex;
+  border-top: 1px solid var(--ios-line);
+  background: #fff;
+}
+
+.k-tabs button {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 8px 0 4px;
+  font-size: 11px;
+  color: #9aa0a6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.k-tabs button span {
+  font-size: 22px;
+  filter: grayscale(1) opacity(0.6);
+}
+
+.k-tabs button.on {
+  color: #1f2933;
+  font-weight: 700;
+}
+
+.k-tabs button.on span {
+  filter: none;
+}
+
+/* ===== 채팅방 ===== */
+#chat {
   background: var(--sky);
 }
 
 .chat-header {
   display: flex;
   align-items: center;
-  padding: calc(env(safe-area-inset-top) + 8px) 8px 10px;
-  background: var(--sky);
+  padding: 8px 8px 10px;
 }
 
 .back-btn {
@@ -161,8 +667,6 @@ h1 {
   color: var(--text);
   font-size: 34px;
   line-height: 1;
-  font-family: inherit;
-  cursor: pointer;
 }
 
 .chat-title {
@@ -177,15 +681,14 @@ h1 {
   color: var(--text);
   font-size: 13px;
   font-weight: 600;
-  font-family: inherit;
   padding: 6px 12px;
   border-radius: 999px;
   margin-right: 6px;
-  cursor: pointer;
 }
 
 .chat-body {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding: 10px 12px 16px;
@@ -194,7 +697,6 @@ h1 {
   gap: 4px;
 }
 
-/* 날짜 표시 */
 .date-divider {
   align-self: center;
   background: rgba(0, 0, 0, 0.18);
@@ -205,7 +707,6 @@ h1 {
   margin: 6px 0 12px;
 }
 
-/* ===== 말풍선 줄 ===== */
 .msg-row {
   display: flex;
   align-items: flex-start;
@@ -217,7 +718,6 @@ h1 {
   margin-top: 8px;
 }
 
-/* 프로필 사진 */
 .avatar,
 .avatar-spacer {
   width: 40px;
@@ -245,7 +745,6 @@ h1 {
 
 .msg-name {
   font-size: 12px;
-  color: var(--text);
   margin: 0 0 4px 2px;
 }
 
@@ -266,7 +765,6 @@ h1 {
   overflow-wrap: anywhere;
 }
 
-/* 첫 말풍선에만 꼬리 달기 */
 .bubble.has-tail {
   border-top-left-radius: 2px;
 }
@@ -286,29 +784,6 @@ h1 {
   white-space: nowrap;
 }
 
-/* ===== 정우(나) 말풍선: 다음 단계에서 써요 ===== */
-.msg-row.me {
-  justify-content: flex-end;
-}
-
-.msg-row.me .bubble {
-  background: var(--yellow);
-  color: var(--yellow-text);
-}
-
-.msg-row.me .bubble.has-tail {
-  border-top-left-radius: 12px;
-  border-top-right-radius: 2px;
-}
-
-.msg-row.me .bubble.has-tail::before {
-  left: auto;
-  right: -7px;
-  border-right: none;
-  border-left: 8px solid var(--yellow);
-}
-
-/* ===== 입력 중... ===== */
 .typing {
   display: flex;
   gap: 5px;
@@ -325,25 +800,9 @@ h1 {
   animation: blink 1.2s infinite;
 }
 
-.typing span:nth-child(2) {
-  animation-delay: 0.2s;
-}
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
 
-.typing span:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
-@keyframes blink {
-  0%, 80%, 100% { opacity: 0.25; }
-  40% { opacity: 1; }
-}
-
-@keyframes pop {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== 아래 입력 줄 (지금은 가짜, 다음 단계에서 진짜로 바꿔요) ===== */
 .chat-footer {
   display: flex;
   align-items: center;
@@ -353,17 +812,20 @@ h1 {
   border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.plus-btn {
+.plus-btn,
+.send-btn {
   width: 34px;
   height: 34px;
   border-radius: 50%;
   background: #e6e8eb;
-  color: #6b7580;
-  font-size: 24px;
-  line-height: 32px;
+  color: #8a949e;
   text-align: center;
+  line-height: 34px;
   flex-shrink: 0;
 }
+
+.plus-btn { font-size: 24px; line-height: 32px; }
+.send-btn { font-size: 18px; font-weight: 700; }
 
 .fake-input {
   flex: 1;
@@ -375,15 +837,145 @@ h1 {
   font-size: 14px;
 }
 
-.send-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: #e6e8eb;
-  color: #9aa3ad;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 34px;
+/* ===== 메모 ===== */
+.memo-layer {
+  background: var(--ios-bg);
+}
+
+.memo-layer.view {
+  background: #fff;
+}
+
+.m-head {
+  padding: 6px 10px;
+}
+
+.m-back {
+  border: none;
+  background: none;
+  color: #d99a00;
+  font-size: 17px;
+  padding: 6px 8px;
+}
+
+.m-title {
+  font-size: 32px;
+  font-weight: 800;
+  padding: 2px 18px 12px;
+}
+
+.m-group {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 0 16px 14px;
+  background: #fff;
+  border-radius: 12px;
+  align-self: stretch;
+}
+
+.m-item {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--ios-line);
+  cursor: pointer;
+}
+
+.m-item:active {
+  background: #f3f4f6;
+}
+
+.m-item b {
+  display: block;
+  font-size: 15px;
+}
+
+.m-item small {
+  display: block;
+  font-size: 13px;
+  color: #8a8f96;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#memo {
+  min-height: 0;
+}
+
+.mv-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 6px 22px 24px;
+}
+
+.mv-date {
   text-align: center;
-  flex-shrink: 0;
+  font-size: 12px;
+  color: #9aa0a6;
+  margin-bottom: 12px;
+}
+
+.mv-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.mv-text {
+  font-size: 16px;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: keep-all;
+}
+
+/* ===== 안내 메시지 ===== */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom) + 90px);
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  white-space: nowrap;
+  z-index: 100;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ===== 애니메이션 ===== */
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.25; }
+  40% { opacity: 1; }
+}
+
+@keyframes blink2 {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide {
+  from { opacity: 0; transform: translateY(-14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-7px); }
+  80% { transform: translateX(7px); }
 }
