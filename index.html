@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#A9C0D6">
+  <meta name="theme-color" content="#a9c0d6">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="탷정">
@@ -35,22 +35,144 @@
       <button id="start-btn" class="start-btn" type="button">게임 시작</button>
     </section>
 
-    <!-- 채팅 화면 -->
-    <section id="chat-screen" class="screen">
-      <header class="chat-header">
-        <button id="back-btn" class="back-btn" type="button" aria-label="뒤로">‹</button>
-        <strong class="chat-title">태현</strong>
-        <button id="replay-btn" class="replay-btn" type="button">다시보기</button>
-      </header>
+    <!-- 정우의 폰 -->
+    <section id="phone">
 
-      <div id="chat-body" class="chat-body"></div>
+      <!-- 맨 위 상태 표시줄 -->
+      <div id="statusbar">
+        <span id="sb-time"></span>
+        <span class="sb-right">
+          <svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true">
+            <path d="M8.5 11.2 6.3 8.9a3.1 3.1 0 0 1 4.4 0z" fill="currentColor"/>
+            <path d="M3.9 6.4a6.5 6.5 0 0 1 9.2 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M1.2 3.7a10.3 10.3 0 0 1 14.6 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <span class="battery"><i></i></span>
+        </span>
+      </div>
 
-      <footer class="chat-footer">
-        <div class="plus-btn" aria-hidden="true">+</div>
-        <div class="fake-input">답장은 다음 단계에서 열려요</div>
-        <div class="send-btn" aria-hidden="true">↑</div>
-      </footer>
+      <!-- 1) 잠금화면 -->
+      <div id="lock" class="layer active">
+        <div class="lock-top">
+          <div id="lock-date" class="lock-date"></div>
+          <div id="lock-time" class="lock-time"></div>
+        </div>
+
+        <div class="notifs">
+          <div class="notif">
+            <span class="n-icon">💬</span>
+            <div class="n-body">
+              <div class="n-head"><b>태현</b><span>지금</span></div>
+              <p>야.</p>
+            </div>
+          </div>
+          <div class="notif">
+            <span class="n-icon">💬</span>
+            <div class="n-body">
+              <div class="n-head"><b>태현</b><span>1분 전</span></div>
+              <p>밥은 먹었냐</p>
+            </div>
+          </div>
+          <div class="notif">
+            <span class="n-icon">💬</span>
+            <div class="n-body">
+              <div class="n-head"><b>우리 반 단톡방</b><span>12분 전</span></div>
+              <p>내일 수행평가 제출 마감이에요</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lock-bottom">
+          <p class="hint">화면을 눌러 잠금 해제</p>
+          <button id="lock-exit" class="lock-exit" type="button">처음으로</button>
+          <div class="home-bar"></div>
+        </div>
+      </div>
+
+      <!-- 2) 암호 입력 -->
+      <div id="passcode" class="layer">
+        <p class="pc-title">암호 입력</p>
+        <div id="dots" class="dots"><i></i><i></i><i></i><i></i></div>
+        <div id="keypad" class="keypad"></div>
+      </div>
+
+      <!-- 3) 홈화면 -->
+      <div id="home" class="layer">
+        <div class="app-grid">
+          <button class="app" data-app="youtube" type="button"><span class="ic ic-youtube">▶</span><em>유튜브</em></button>
+          <button class="app" data-app="chrome" type="button"><span class="ic ic-chrome">🌐</span><em>크롬</em></button>
+          <button class="app" data-app="insta" type="button"><span class="ic ic-insta">📷</span><em>인스타</em></button>
+        </div>
+
+        <div class="dock">
+          <button class="app" data-app="phone" type="button"><span class="ic ic-phone">📞</span></button>
+          <button class="app" data-app="safari" type="button"><span class="ic ic-safari">🧭</span></button>
+          <button class="app" data-app="kakao" type="button">
+            <span class="ic ic-kakao">💬</span>
+            <b id="home-badge" class="badge">7</b>
+          </button>
+          <button class="app" data-app="memo" type="button"><span class="ic ic-memo">📝</span></button>
+        </div>
+        <div class="home-bar"></div>
+      </div>
+
+      <!-- 4) 카톡 (친구 / 채팅 / 선물 / 더보기) -->
+      <div id="kakao" class="layer">
+        <div class="k-head"><h2 id="k-title">친구</h2></div>
+        <div id="k-body" class="k-body"></div>
+        <nav id="k-tabs" class="k-tabs">
+          <button type="button" data-tab="friends"><span>👤</span>친구</button>
+          <button type="button" data-tab="chats"><span>💬</span>채팅</button>
+          <button type="button" data-tab="gifts"><span>🎁</span>선물</button>
+          <button type="button" data-tab="more"><span>⋯</span>더보기</button>
+        </nav>
+        <button class="go-home" data-go="home" type="button" aria-label="홈으로"></button>
+      </div>
+
+      <!-- 5) 카톡 채팅방 -->
+      <div id="chat" class="layer">
+        <header class="chat-header">
+          <button id="back-btn" class="back-btn" type="button" aria-label="뒤로">‹</button>
+          <strong class="chat-title">태현</strong>
+          <button id="replay-btn" class="replay-btn" type="button">다시보기</button>
+        </header>
+
+        <div id="chat-body" class="chat-body"></div>
+
+        <footer class="chat-footer">
+          <div class="plus-btn" aria-hidden="true">+</div>
+          <div class="fake-input">답장은 다음 단계에서 열려요</div>
+          <div class="send-btn" aria-hidden="true">↑</div>
+        </footer>
+      </div>
+
+      <!-- 6) 메모 목록 -->
+      <div id="memo" class="layer memo-layer">
+        <div class="m-head">
+          <button class="m-back" data-go="home" type="button">‹ 홈</button>
+        </div>
+        <h2 class="m-title">메모</h2>
+        <div id="memo-list" class="m-group"></div>
+        <button class="go-home" data-go="home" type="button" aria-label="홈으로"></button>
+      </div>
+
+      <!-- 7) 메모 내용 -->
+      <div id="memo-view" class="layer memo-layer view">
+        <div class="m-head">
+          <button class="m-back" data-go="memo" type="button">‹ 메모</button>
+        </div>
+        <div class="mv-body">
+          <div id="mv-date" class="mv-date"></div>
+          <h3 id="mv-title" class="mv-title"></h3>
+          <div id="mv-text" class="mv-text"></div>
+        </div>
+        <button class="go-home" data-go="home" type="button" aria-label="홈으로"></button>
+      </div>
+
     </section>
+
+    <!-- 안내 메시지 -->
+    <div id="toast" class="toast" role="status"></div>
 
   </main>
 
