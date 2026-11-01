@@ -18,8 +18,10 @@ const messages = [
   { text: "대답 안 해도 되니까 읽기나 해", wait: 1600 }
 ];
 
+const SENDER_NAME = "태현";
+const SENDER_INITIAL = "태";
+
 // ===== 진행 중인 재생을 구분하기 위한 번호 =====
-// (뒤로 갔다가 다시 시작할 때 이전 재생이 섞이지 않게 해줘요)
 let runId = 0;
 
 // 화면 바꾸기
@@ -49,35 +51,83 @@ function nowText() {
   });
 }
 
+// 오늘 날짜를 "2026년 11월 1일 일요일" 모양으로 만들기
+function todayText() {
+  return new Date().toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long"
+  });
+}
+
 // 말풍선 하나 추가하기
-function addBubble(text, showTime) {
+// isFirst = 묶음의 첫 말풍선인가 (프로필, 이름, 꼬리가 붙어요)
+// isLast  = 묶음의 마지막 말풍선인가 (시간이 붙어요)
+function addBubble(text, isFirst, isLast) {
   const row = document.createElement("div");
-  row.className = "msg-row";
+  row.className = "msg-row" + (isFirst ? " first-in-group" : "");
+
+  // 왼쪽 프로필 자리
+  if (isFirst) {
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.textContent = SENDER_INITIAL;
+    row.appendChild(avatar);
+  } else {
+    const spacer = document.createElement("div");
+    spacer.className = "avatar-spacer";
+    row.appendChild(spacer);
+  }
+
+  const col = document.createElement("div");
+  col.className = "msg-col";
+
+  if (isFirst) {
+    const name = document.createElement("div");
+    name.className = "msg-name";
+    name.textContent = SENDER_NAME;
+    col.appendChild(name);
+  }
+
+  const line = document.createElement("div");
+  line.className = "bubble-line";
 
   const bubble = document.createElement("div");
-  bubble.className = "bubble";
+  bubble.className = "bubble" + (isFirst ? " has-tail" : "");
   bubble.textContent = text;
-  row.appendChild(bubble);
+  line.appendChild(bubble);
 
-  if (showTime) {
+  if (isLast) {
     const time = document.createElement("span");
     time.className = "msg-time";
     time.textContent = nowText();
-    row.appendChild(time);
+    line.appendChild(time);
   }
 
+  col.appendChild(line);
+  row.appendChild(col);
   chatBody.appendChild(row);
   scrollToBottom();
 }
 
-// "입력 중..." 표시 만들기 / 지우기
-function addTyping() {
+// "입력 중..." 표시 만들기
+function addTyping(isFirst) {
+  const row = document.createElement("div");
+  row.className = "msg-row" + (isFirst ? " first-in-group" : "");
+
+  const spacer = document.createElement("div");
+  spacer.className = "avatar-spacer";
+  row.appendChild(spacer);
+
   const typing = document.createElement("div");
   typing.className = "typing";
   typing.innerHTML = "<span></span><span></span><span></span>";
-  chatBody.appendChild(typing);
+  row.appendChild(typing);
+
+  chatBody.appendChild(row);
   scrollToBottom();
-  return typing;
+  return row;
 }
 
 // 채팅 재생하기 (메시지가 하나씩 뜸)
@@ -89,7 +139,7 @@ async function playChat() {
 
   const divider = document.createElement("div");
   divider.className = "date-divider";
-  divider.textContent = "오늘 밤";
+  divider.textContent = todayText();
   chatBody.appendChild(divider);
 
   await sleep(800);
@@ -97,14 +147,16 @@ async function playChat() {
   for (let i = 0; i < messages.length; i++) {
     if (myRun !== runId) return; // 다른 재생이 시작됐으면 멈춤
 
-    const typing = addTyping();
+    const isFirst = i === 0;
+    const isLast = i === messages.length - 1;
+
+    const typing = addTyping(isFirst);
     await sleep(messages[i].wait);
 
     if (myRun !== runId) return;
 
     typing.remove();
-    const isLast = i === messages.length - 1;
-    addBubble(messages[i].text, isLast);
+    addBubble(messages[i].text, isFirst, isLast);
   }
 }
 
