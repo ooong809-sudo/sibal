@@ -7,6 +7,9 @@
   --text-sub: #b9b3cc;
   --accent: #ffd86b;
   --accent-text: #2a2438;
+
+  --chat-bg: #232238;
+  --bubble-other: #3a3856;
 }
 
 * {
@@ -28,7 +31,7 @@ body {
   line-height: 1.6;
 }
 
-/* ===== 앱 전체 틀 (폰 화면 크기에 맞춤) ===== */
+/* ===== 앱 전체 틀 ===== */
 #app {
   max-width: 480px;
   min-height: 100vh;
@@ -86,7 +89,6 @@ h1 {
   word-break: keep-all;
 }
 
-/* ===== 게임 설명 카드 ===== */
 .info-card {
   background: var(--card);
   border-radius: 20px;
@@ -121,7 +123,6 @@ h1 {
   font-weight: 700;
 }
 
-/* ===== 시작 버튼 ===== */
 .start-btn {
   width: 100%;
   padding: 17px;
@@ -140,24 +141,174 @@ h1 {
   transform: scale(0.97);
 }
 
-/* ===== 안내 메시지 (토스트) ===== */
-.toast {
-  position: fixed;
-  left: 50%;
-  bottom: calc(env(safe-area-inset-bottom) + 100px);
-  transform: translateX(-50%) translateY(20px);
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  padding: 12px 20px;
+/* ===== 채팅 화면 ===== */
+#chat-screen {
+  padding: 0;
+  background: var(--chat-bg);
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: calc(env(safe-area-inset-top) + 10px) 14px 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: none;
+  color: var(--text);
+  font-size: 32px;
+  line-height: 1;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e8c15a;
+  color: var(--accent-text);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.who {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.who strong {
+  font-size: 16px;
+}
+
+.who span {
+  font-size: 12px;
+  color: #7ee0a0;
+}
+
+.chat-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.date-divider {
+  align-self: center;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-sub);
+  font-size: 12px;
+  padding: 4px 12px;
   border-radius: 999px;
-  font-size: 14px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  margin-bottom: 8px;
+}
+
+/* 말풍선 (태현 = 왼쪽) */
+.msg-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  animation: pop 0.2s ease;
+}
+
+.bubble {
+  max-width: 75%;
+  background: var(--bubble-other);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 4px 18px 18px 18px;
+  font-size: 15.5px;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.msg-time {
+  font-size: 11px;
+  color: var(--text-sub);
   white-space: nowrap;
 }
 
-.toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
+/* 입력 중... 표시 */
+.typing {
+  display: flex;
+  gap: 5px;
+  background: var(--bubble-other);
+  padding: 14px 16px;
+  border-radius: 4px 18px 18px 18px;
+  align-self: flex-start;
+}
+
+.typing span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-sub);
+  animation: blink 1.2s infinite;
+}
+
+.typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.25; }
+  40% { opacity: 1; }
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 아래 입력 줄 (지금은 가짜. 다음 단계에서 진짜로 바꿀 거예요) */
+.chat-footer {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px calc(env(safe-area-inset-bottom) + 10px);
+  background: rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.fake-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-sub);
+  border-radius: 999px;
+  padding: 11px 16px;
+  font-size: 14px;
+}
+
+.replay-btn {
+  border: none;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 700;
+  font-size: 14px;
+  font-family: inherit;
+  padding: 0 16px;
+  cursor: pointer;
+}
+
+.replay-btn:active {
+  transform: scale(0.96);
 }
