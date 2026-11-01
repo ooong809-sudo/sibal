@@ -1,0 +1,163 @@
+/* ===== 기본 색상 (여기 값만 바꾸면 분위기가 바뀌어요) ===== */
+:root {
+  --bg-top: #1c1b2e;
+  --bg-bottom: #2d2a4a;
+  --card: rgba(255, 255, 255, 0.08);
+  --text: #f4f1fa;
+  --text-sub: #b9b3cc;
+  --accent: #ffd86b;
+  --accent-text: #2a2438;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+  color: var(--text);
+  font-family: -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  line-height: 1.6;
+}
+
+/* ===== 앱 전체 틀 (폰 화면 크기에 맞춤) ===== */
+#app {
+  max-width: 480px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  position: relative;
+}
+
+.screen {
+  display: none;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: calc(env(safe-area-inset-top) + 28px) 22px calc(env(safe-area-inset-bottom) + 28px);
+  flex-direction: column;
+}
+
+.screen.active {
+  display: flex;
+}
+
+/* ===== 타이틀 화면 ===== */
+.app-name {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--accent);
+}
+
+.title-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px 0;
+}
+
+.bubble-icon {
+  font-size: 52px;
+  margin-bottom: 18px;
+}
+
+h1 {
+  font-size: 30px;
+  line-height: 1.3;
+  word-break: keep-all;
+}
+
+.tagline {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--text-sub);
+  word-break: keep-all;
+}
+
+/* ===== 게임 설명 카드 ===== */
+.info-card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.info-card h2 {
+  font-size: 15px;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.info-card ul {
+  list-style: none;
+}
+
+.info-card li {
+  font-size: 14px;
+  color: var(--text);
+  padding-left: 14px;
+  position: relative;
+  margin-bottom: 6px;
+  word-break: keep-all;
+}
+
+.info-card li::before {
+  content: "·";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ===== 시작 버튼 ===== */
+.start-btn {
+  width: 100%;
+  padding: 17px;
+  border: none;
+  border-radius: 16px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 17px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.start-btn:active {
+  transform: scale(0.97);
+}
+
+/* ===== 안내 메시지 (토스트) ===== */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom) + 100px);
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
