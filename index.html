@@ -35,8 +35,24 @@
       <button id="start-btn" class="start-btn" type="button">게임 시작</button>
     </section>
 
-    <!-- 안내 메시지 (버튼 눌렀을 때 잠깐 뜸) -->
-    <div id="toast" class="toast" role="status"></div>
+    <!-- 채팅 화면 -->
+    <section id="chat-screen" class="screen">
+      <header class="chat-header">
+        <button id="back-btn" class="icon-btn" type="button" aria-label="뒤로">‹</button>
+        <div class="avatar" aria-hidden="true">태</div>
+        <div class="who">
+          <strong>태현</strong>
+          <span>온라인</span>
+        </div>
+      </header>
+
+      <div id="chat-body" class="chat-body"></div>
+
+      <footer class="chat-footer">
+        <div class="fake-input">답장은 다음 단계에서 열려요 ✍️</div>
+        <button id="replay-btn" class="replay-btn" type="button">다시 보기</button>
+      </footer>
+    </section>
 
   </main>
 
